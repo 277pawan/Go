@@ -109,11 +109,77 @@ func main() {
 		fmt.Println("You will be charged for everything.")
 	}
 	loopfunction()
+	ans := returnfunction()
+	fmt.Println(ans)
+
+	sumOfProducts := calculateTotal(1, 2, 3, 4, 5, 6, 7)
+	fmt.Println("this is the sum of products", sumOfProducts)
+
+	concatUserName := func(fname string, lname string) string {
+		return fmt.Sprintf("%s %s", fname, lname)
+	}
+	fmt.Printf("This is user full name:- %v\n ", concatUserName("Niki", "naina"))
+
+	w := Wishlist{
+		Name:  "dell",
+		Price: 8000,
+		Stock: 8,
+	}
+	fmt.Println("this is the price of this much quantity of product", w.CalculateStock(3))
+
+	// fmt.Println("after using this much remaining quantity of Wishlist:-",
+	w.reduceStock(3)
+	fmt.Println("final product details:-", w)
+
 	app.Listen("localhost:9000")
+
 }
 
+// these are the types of the Cart and the wishlist
+type Cart struct {
+	Name  string
+	Price float64
+	Stock int
+}
+
+type Wishlist struct {
+	Name  string
+	Price int
+	Stock int
+}
+
+// these are called receiver function
+
+func (p Cart) Calculate(qty int) float64 {
+	return p.Price * float64(qty)
+}
+
+func (w Wishlist) CalculateStock(qty int) int {
+	return w.Price * qty
+}
+
+// for pass by value call it like this
+// for pass by reference add pointed here in *Wishlist ()
+func (w Wishlist) reduceStock(qty int) {
+	if w.Stock > qty {
+		w.Stock -= qty
+	}
+	// return w
+}
 func helperfunction() {
 	fmt.Println("hello this is a helper function")
+}
+
+func returnfunction() string {
+	return "we are testing this return function"
+}
+
+func calculateTotal(Products ...int) int {
+	totalamount := 0
+	for _, price := range Products {
+		totalamount += price
+	}
+	return totalamount
 }
 
 func loopfunction() {
