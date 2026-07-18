@@ -11,8 +11,8 @@ import (
 // Container holds all initialized handlers.
 // Add new handlers here as the app grows.
 type Container struct {
-	UserHandler *handlers.UserHandler
-	// ProductHandler *handlers.ProductHandler
+	UserHandler    *handlers.UserHandler
+	ProductHandler *handlers.ProductHandler
 	// OrderHandler   *handlers.OrderHandler
 }
 
@@ -20,12 +20,15 @@ type Container struct {
 func New(db *gorm.DB) *Container {
 	// Repositories
 	userRepo := repository.NewUserRepository(db)
+	productRepo := repository.NewProductRepository(db)
 
 	// Services
 	userService := service.NewUserService(userRepo)
+	productService := service.NewProductService(productRepo)
 
 	// Handlers
 	return &Container{
-		UserHandler: handlers.NewUserHandler(userService),
+		UserHandler:    handlers.NewUserHandler(userService),
+		ProductHandler: handlers.NewProductHandler(productService),
 	}
 }

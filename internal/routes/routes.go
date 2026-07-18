@@ -11,7 +11,7 @@ func SetupRoutes(app *fiber.App) {
 	c := container.New(configs.DB)
 
 	UserRoutes(app, c.UserHandler)
+	ProductRoutes(app, c.ProductHandler)
 	// ProductRoutes(app, c.ProductHandler)
 	// OrderRoutes(app, c.OrderHandler)
 }
-
