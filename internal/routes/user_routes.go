@@ -7,5 +7,5 @@ import (
 )
 
 func UserRoutes(app *fiber.App, handler *handlers.UserHandler) {
-	app.Get("/user", handler.RegisterUser)
+	app.Post("/user", handler.RegisterUser)
 }

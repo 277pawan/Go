@@ -1,25 +1,55 @@
 package handlers
 
 import (
-	"fmt"
 	"go_ecommerce-app/internal/dto/request"
-	"log"
+	"go_ecommerce-app/internal/dto/response"
+	"go_ecommerce-app/internal/service"
+	"go_ecommerce-app/internal/validation"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type UserHandler struct {
+	userService *service.UserService
+}
+
+func NewUserHandler(service *service.UserService) *UserHandler {
+	return &UserHandler{
+		userService: service,
+	}
 }
 
 func (u *UserHandler) RegisterUser(c *fiber.Ctx) error {
-	req := request.UserRequest{}
 
-	fmt.Println(c)
+	var req request.UserRequest
 
-	err := c.BodyParser(&req)
-	if err != nil {
-		log.Println("Error parsing request body:", err)
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid request",
+		})
 	}
 
-	return nil
+	if err := validation.Validate.Struct(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"errors": validation.FormatValidationErrors(err),
+		})
+	}
+
+	newUser, err := u.userService.RegisterUser(req)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	userResponse := response.UserResponse{
+		Name:      newUser.Name,
+		Email:     newUser.Email,
+		CreatedAt: newUser.CreatedAt,
+		UpdatedAt: newUser.UpdatedAt,
+		DeletedAt: newUser.DeletedAt,
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": userResponse,
+		"message": "User registered successfully",
+	})
 }
