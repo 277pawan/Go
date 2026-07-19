@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"go_ecommerce-app/internal/dto/request"
-	"go_ecommerce-app/internal/dto/response"
 	"go_ecommerce-app/internal/service"
 	"go_ecommerce-app/internal/validation"
 
@@ -19,6 +18,7 @@ func NewUserHandler(service *service.UserService) *UserHandler {
 	}
 }
 
+// Register User Hanlder
 func (u *UserHandler) RegisterUser(c *fiber.Ctx) error {
 
 	var req request.UserRequest
@@ -41,15 +41,38 @@ func (u *UserHandler) RegisterUser(c *fiber.Ctx) error {
 			"message": err.Error(),
 		})
 	}
-	userResponse := response.UserResponse{
-		Name:      newUser.Name,
-		Email:     newUser.Email,
-		CreatedAt: newUser.CreatedAt,
-		UpdatedAt: newUser.UpdatedAt,
-		DeletedAt: newUser.DeletedAt,
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": newUser,
+		"message": "User registered successfully",
+	})
+}
+
+// Login User Handler
+func (u *UserHandler) LoginUser(c *fiber.Ctx) error {
+
+	var req request.LoginRequest
+
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid request",
+		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": userResponse,
-		"message": "User registered successfully",
+	if err := validation.Validate.Struct(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"errors": validation.FormatValidationErrors(err),
+		})
+	}
+
+	userLogin, err := u.userService.LoginUser(&req)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{
+		"data":    userLogin,
+		"message": "User Login Successfully",
 	})
 }

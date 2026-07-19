@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"go_ecommerce-app/internal/dto/request"
+	"go_ecommerce-app/internal/dto/response"
+	"go_ecommerce-app/internal/helper"
 	"go_ecommerce-app/internal/models"
 	"go_ecommerce-app/internal/repository"
 
@@ -22,7 +24,7 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 	}
 }
 
-func (u *UserService) RegisterUser(req request.UserRequest) (res *models.User, err error) {
+func (u *UserService) RegisterUser(req request.UserRequest) (res *response.UserResponse, err error) {
 
 	user, err := u.repo.FindByEmail(req.Email)
 
@@ -50,5 +52,43 @@ func (u *UserService) RegisterUser(req request.UserRequest) (res *models.User, e
 	}
 	u.repo.Create(newUser)
 
-	return newUser, nil
+	return &response.UserResponse{
+		Name: newUser.Name, Email: newUser.Email,
+		CreatedAt: newUser.CreatedAt,
+		UpdatedAt: newUser.UpdatedAt,
+		DeletedAt: newUser.DeletedAt,
+	}, nil
+
+}
+
+func (u *UserService) LoginUser(req *request.LoginRequest) (res *response.LoginResponse, err error) {
+	user, err := u.repo.FindByEmail(req.Email)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("Invalid email and password.")
+		}
+		return nil, err
+	}
+
+	// NOTE: first arg = hashed (from DB), second arg = plain text (from request)
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
+
+	if err != nil {
+		return nil, errors.New("Invalid email and password.")
+	}
+
+	token, err := helper.GenerateJWT(user.Email, user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &response.LoginResponse{
+		ID:        user.ID,
+		Name:      user.Name,
+		Email:     user.Email,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+		Token:     token,
+	}, nil
+
 }

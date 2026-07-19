@@ -8,4 +8,5 @@ import (
 
 func UserRoutes(app *fiber.App, handler *handlers.UserHandler) {
 	app.Post("/user", handler.RegisterUser)
+	app.Post("/login", handler.LoginUser)
 }

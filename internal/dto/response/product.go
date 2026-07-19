@@ -6,4 +6,3 @@ type PrdouctResponse struct {
 	Price       float64
 	Stock       int
 }
-
