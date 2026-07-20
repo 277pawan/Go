@@ -8,5 +8,5 @@ import (
 
 func ProductRoutes(app *fiber.App, handler *handlers.ProductHandler) {
 	app.Post("/product", handler.CreateProduct)
+	app.Get("/product", handler.GetProducts)
 }
-

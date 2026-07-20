@@ -25,6 +25,8 @@ func StartServer() {
 
 	routes.SetupRoutes(app)
 
-	app.Listen(":" + port)
+	if err := app.Listen(":" + port); err != nil {
+		log.Fatal("Server failed to start: ", err)
+	}
 }
 

@@ -19,3 +19,10 @@ func NewProductRepository(db *gorm.DB) *ProductRepository {
 func (p *ProductRepository) CreateProduct(product *models.Product) error {
 	return p.db.Create(product).Error
 }
+
+func (p *ProductRepository) GetProducts() ([]models.Product, error) {
+	var products []models.Product
+	err := p.db.Preload("User").Find(&products).Error
+
+	return products, err
+}

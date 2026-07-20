@@ -10,7 +10,7 @@ type Product struct {
 	Price       float64
 	Stock       int
 
-	UserId uint
+	UserID uint
 	User   User
 }
 

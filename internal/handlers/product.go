@@ -45,14 +45,30 @@ func (p *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 		})
 	}
 
-	productResponse := response.PrdouctResponse{
+	productResponse := response.ProductCreateResponse{
 		ProductName: newProduct.ProductName,
 		Description: newProduct.Description,
 		Price:       newProduct.Price,
 		Stock:       newProduct.Stock,
+		UserID:      newProduct.UserID,
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": productResponse,
 		"message": "Product Created successfully",
+	})
+}
+
+func (p *ProductHandler) GetProducts(c *fiber.Ctx) error {
+
+	products, err := p.productService.GetProducts()
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"data":    products,
+		"message": "Products data fetched successfully.",
 	})
 }
