@@ -1,3 +1,4 @@
+// Package Service file
 package service
 
 import (
@@ -24,6 +25,7 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 	}
 }
 
+// RegisterUser function
 func (u *UserService) RegisterUser(req request.UserRequest) (res *response.UserResponse, err error) {
 
 	user, err := u.repo.FindByEmail(req.Email)
@@ -90,5 +92,29 @@ func (u *UserService) LoginUser(req *request.LoginRequest) (res *response.LoginR
 		UpdatedAt: user.UpdatedAt,
 		Token:     token,
 	}, nil
+
+}
+
+func (u *UserService) GetUser() ([]response.UserResponse, error) {
+
+	var res []response.UserResponse
+
+	users, err := u.repo.GetUser()
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, user := range users {
+		res = append(res, response.UserResponse{
+			ID:        user.ID,
+			Name:      user.Name,
+			Email:     user.Email,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		})
+	}
+
+	return res, nil
 
 }

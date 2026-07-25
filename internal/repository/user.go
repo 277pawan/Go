@@ -30,3 +30,16 @@ func (u *UserRepository) FindByEmail(email string) (*models.User, error) {
 
 	return &user, nil
 }
+
+func (u *UserRepository) GetUser() ([]models.User, error) {
+	var user []models.User
+
+	err := u.db.Find(&user).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+
+}

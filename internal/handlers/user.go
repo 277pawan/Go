@@ -76,3 +76,20 @@ func (u *UserHandler) LoginUser(c *fiber.Ctx) error {
 		"message": "User Login Successfully",
 	})
 }
+
+func (u *UserHandler) GetUser(c *fiber.Ctx) error {
+
+	users, err := u.userService.GetUser()
+	if err != nil {
+		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"data":    users,
+		"message": "User data fetched successfully",
+	})
+
+}
