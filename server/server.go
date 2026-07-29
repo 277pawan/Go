@@ -18,6 +18,7 @@ func StartServer() {
 	}
 
 	configs.ConnectDB()
+	configs.ConnectRedis()
 
 	port := os.Getenv("PORT")
 
@@ -29,4 +30,3 @@ func StartServer() {
 		log.Fatal("Server failed to start: ", err)
 	}
 }
-
