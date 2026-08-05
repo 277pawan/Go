@@ -12,11 +12,9 @@ import (
 func RateLimiter(rdb *redis.Client, limit int64, window time.Duration) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 
-		fmt.Println(c)
-		fmt.Println(c.IP())
 		clientIp := c.IP()
 
-		key := "rate-limit" + clientIp
+		key := "rate" + clientIp
 
 		now := time.Now().Unix()
 
