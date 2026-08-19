@@ -1,12 +1,14 @@
 package server
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/joho/godotenv"
 	"go_ecommerce-app/configs"
+	"go_ecommerce-app/internal/helper"
 	"go_ecommerce-app/internal/routes"
 	"log"
 	"os"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 )
 
 func StartServer() {
@@ -19,6 +21,9 @@ func StartServer() {
 
 	configs.ConnectDB()
 	configs.ConnectRedis()
+
+	// helper.KafkaProducer()
+	go helper.KafkaConsumer()
 
 	port := os.Getenv("PORT")
 

@@ -104,6 +104,7 @@ func (u *UserService) GetUser() ([]response.UserResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+	helper.KafkaProducer()
 
 	for _, user := range users {
 		res = append(res, response.UserResponse{
